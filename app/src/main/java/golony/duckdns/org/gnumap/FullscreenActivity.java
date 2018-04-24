@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.FrameLayout;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -111,6 +112,10 @@ public class FullscreenActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        final CameraSurfaceView cameraView = new CameraSurfaceView(getApplicationContext());
+        FrameLayout previewFrame = (FrameLayout) findViewById(R.id.previewFrame);
+        previewFrame.addView(cameraView);
     }
 
     private class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
