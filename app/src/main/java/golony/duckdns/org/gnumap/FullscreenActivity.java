@@ -3,6 +3,7 @@ package golony.duckdns.org.gnumap;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Camera;
+import android.os.Environment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
+import golony.duckdns.org.gnumap.DBHelper;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -112,6 +114,13 @@ public class FullscreenActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        DBHelper dbHelper = new DBHelper(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db"
+                , null, 1);
+        System.out.println("객체 생성 OK");
+        System.out.println("DB path: "+ Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db");
+        dbHelper.getResult();
+
 
         final CameraSurfaceView cameraView = new CameraSurfaceView(getApplicationContext());
         FrameLayout previewFrame = (FrameLayout) findViewById(R.id.previewFrame);
