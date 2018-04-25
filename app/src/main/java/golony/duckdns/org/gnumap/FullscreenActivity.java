@@ -20,6 +20,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 //import golony.duckdns.org.gnumap.DBHelper;
 
 /**
@@ -143,10 +145,11 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         System.out.println("객체 생성 OK");
         System.out.println("DB path: " + Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db");
         // 테스트
-//        dbHelper.getResult();
+        ArrayList<Building> temp = dbHelper.getResult();
 //        dbHelper.searchName("컴퓨터과학관");
 //        dbHelper.searchNum(30);
 //        dbHelper.searchPos(35.152, 128.1, 0.001);
+
 
         // 센서 초기화 파트
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
