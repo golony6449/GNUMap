@@ -14,6 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 //import golony.duckdns.org.gnumap.DBHelper;
 
 /**
@@ -119,13 +120,18 @@ public class FullscreenActivity extends AppCompatActivity {
                 , null, 1);
         System.out.println("객체 생성 OK");
         System.out.println("DB path: "+ Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db");
-        dbHelper.getResult();
-
+//        dbHelper.getResult();
+//        dbHelper.searchName("컴퓨터과학관");
+//        dbHelper.searchNum(30);
+        dbHelper.searchPos(35.152, 128.1, 0.001);
 
         final CameraSurfaceView cameraView = new CameraSurfaceView(getApplicationContext());
         FrameLayout previewFrame = (FrameLayout) findViewById(R.id.previewFrame);
         previewFrame.addView(cameraView);
 
+        TextView text = new TextView(this);
+        text.setText("테스트");
+        previewFrame.addView(text);
     }
 
 
