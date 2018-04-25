@@ -2,7 +2,12 @@ package golony.duckdns.org.gnumap;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Environment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +26,7 @@ import android.widget.TextView;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenActivity extends AppCompatActivity {
+public class FullscreenActivity extends AppCompatActivity implements SensorEventListener {
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -92,6 +97,22 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     };
 
+    // 센서 메니저 생성
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private Sensor mMagneticField;
+
+    // 센서 값
+    float[] magVal;
+    float[] gravityVal;
+    float mAzimut, mPitch, mRoll;
+
+    // DB Helper 생성
+    DBHelper dbHelper;
+
+    // 디버깅용 TextView
+    TextView text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,25 +137,38 @@ public class FullscreenActivity extends AppCompatActivity {
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        DBHelper dbHelper = new DBHelper(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db"
+        // DB 초기화 파트
+        dbHelper = new DBHelper(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db"
                 , null, 1);
         System.out.println("객체 생성 OK");
-        System.out.println("DB path: "+ Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db");
+        System.out.println("DB path: " + Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db");
+        // 테스트
 //        dbHelper.getResult();
 //        dbHelper.searchName("컴퓨터과학관");
 //        dbHelper.searchNum(30);
-        dbHelper.searchPos(35.152, 128.1, 0.001);
+//        dbHelper.searchPos(35.152, 128.1, 0.001);
+
+        // 센서 초기화 파트
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
 
         final CameraSurfaceView cameraView = new CameraSurfaceView(getApplicationContext());
         FrameLayout previewFrame = (FrameLayout) findViewById(R.id.previewFrame);
         previewFrame.addView(cameraView);
 
-        TextView text = new TextView(this);
+        text = new TextView(this);
+        text.setTextColor(Color.WHITE);
         text.setText("테스트");
         previewFrame.addView(text);
     }
 
-
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mMagneticField, SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -188,4 +222,43 @@ public class FullscreenActivity extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    public void onSensorChanged(SensorEvent event) {
+        System.out.println("센서 값 변경");
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            magVal = event.values;
+//           System.out.println(magVal[0]); // 0 ~ 2
+//            text.setText("X: " + magVal[0] + " Y: " + magVal[1] + " Z: " + magVal[2]);
+        }
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            gravityVal = event.values;
+        }
+
+        if (magVal != null && gravityVal != null) {
+            float R[] = new float[9];
+            float I[] = new float[9];
+            boolean success = SensorManager.getRotationMatrix(R, I, gravityVal, magVal);
+            if (success) {
+                float orientation[] = new float[3];
+                SensorManager.getOrientation(R, orientation);
+                mAzimut = (float) Math.toDegrees(orientation[0]);
+                mPitch = (float) Math.toDegrees(orientation[1]);
+                mRoll = (float) Math.toDegrees(orientation[2]);
+
+                if (mAzimut < 0){
+                    mAzimut = mAzimut + 360;
+                }
+
+                String result;
+                result = "Azimut:" + mAzimut + "\n" + "Pitch:" + mPitch + "\n" + "Roll:" + mRoll;
+//                result = "방위각: " + mAzimut;
+                text.setText(result);
+            }
+        }
+    }
+
+    public void onAccuracyChanged (Sensor sensor,int val){
+
+    }
 }
+
