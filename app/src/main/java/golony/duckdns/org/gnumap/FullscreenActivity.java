@@ -8,6 +8,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Environment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +23,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 //import golony.duckdns.org.gnumap.DBHelper;
@@ -114,6 +118,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
     // 디버깅용 TextView
     TextView text;
+    TextView GPStext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +161,8 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
+        // GPS 초기화
+        startLocationService();
 
         final CameraSurfaceView cameraView = new CameraSurfaceView(getApplicationContext());
         FrameLayout previewFrame = (FrameLayout) findViewById(R.id.previewFrame);
@@ -165,6 +172,11 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         text.setTextColor(Color.WHITE);
         text.setText("테스트");
         previewFrame.addView(text);
+
+        GPStext = new TextView(this);
+        GPStext.setTextColor(Color.WHITE);
+        GPStext.setText("\n\n\n수신중");
+        previewFrame.addView(GPStext);
     }
 
     protected void onResume() {
@@ -227,7 +239,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     }
 
     public void onSensorChanged(SensorEvent event) {
-        System.out.println("센서 값 변경");
+//        System.out.println("센서 값 변경");
         if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             magVal = event.values;
 //           System.out.println(magVal[0]); // 0 ~ 2
@@ -262,6 +274,67 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
     public void onAccuracyChanged (Sensor sensor,int val){
 
+    }
+
+    // GPS
+    private void startLocationService() {
+        System.out.println("위치서비스 시작");
+        // 위치 관리자 객체 참조
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
+        // 위치 정보를 받을 리스너 생성
+        GPSListener gpsListener = new GPSListener();
+        long minTime = 500;
+        float minDistance = 0;
+
+        // GPS를 이용한 위치 요청
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
+
+        // 위치 확인이 안되는 경우에도 최근에 확인된 위치 정보 먼저 확인
+        try {
+            Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastLocation != null) {
+
+                Double latitude = lastLocation.getLatitude();
+                Double longitude = lastLocation.getLongitude();
+                System.out.println("Last Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
+                GPStext.setText("\n\n\n\nLast Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
+//                Toast.makeText(getApplicationContext(), "Last Known Location : " + "Latitude : " + latitude + "\nLongitude:" + longitude, Toast.LENGTH_LONG).show();
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        Toast.makeText(getApplicationContext(), "위치 확인이 시작되었습니다. 로그를 확인하세요.", Toast.LENGTH_SHORT).show();
+
+    }
+
+    /**
+     * 리스너 클래스 정의
+     */
+    private class GPSListener implements LocationListener {
+        /**
+         * 위치 정보가 확인될 때 자동 호출되는 메소드
+         */
+        public void onLocationChanged(Location location) {
+            Double latitude = location.getLatitude();
+            Double longitude = location.getLongitude();
+
+            String msg = "Latitude : "+ latitude + "\nLongitude:"+ longitude;
+            Log.i("GPSListener", msg);
+            GPStext.setText("\n\n\n\nLast Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
     }
 }
 
