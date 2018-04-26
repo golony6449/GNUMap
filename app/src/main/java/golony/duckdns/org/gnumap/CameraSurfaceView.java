@@ -24,6 +24,10 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         try {
             camera.setDisplayOrientation(90); // 화면 회전
             camera.setPreviewDisplay(mHolder);
+            Camera.Parameters params = camera.getParameters();
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            camera.setParameters(params);
+
         } catch (Exception e) {
             Log.e("CameraSurfaceView", "Failed to set camera preview.", e);
         }
