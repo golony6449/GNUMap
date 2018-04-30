@@ -11,4 +11,8 @@ public class Building {
     Building(int buildNum, String buildName,double X, double Y, String imgPath, int wifi){
         this.buildName = buildName; this.buildNum = buildNum; this.X = X; this.Y = Y; this.imgPath = imgPath; this.wifi = wifi;
     }
+
+    public void printAll(){
+        System.out.println(buildName + " " + buildNum + " " + X + " " + Y + " " + imgPath + " " + wifi);
+    }
 }

@@ -22,7 +22,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         camera = Camera.open();
 
         try {
-            camera.setDisplayOrientation(90); // 화면 회전
+//            camera.setDisplayOrientation(90); // 화면 회전
             camera.setPreviewDisplay(mHolder);
             Camera.Parameters params = camera.getParameters();
             params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);

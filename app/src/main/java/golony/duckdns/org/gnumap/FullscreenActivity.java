@@ -112,13 +112,16 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     float[] magVal;
     float[] gravityVal;
     float mAzimut, mPitch, mRoll;
+    double X, Y;
 
     // DB Helper 생성
     DBHelper dbHelper;
+    ArrayList<Building> buildList;
 
     // 디버깅용 TextView
     TextView text;
     TextView GPStext;
+    BuildView markerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +153,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         System.out.println("객체 생성 OK");
         System.out.println("DB path: " + Environment.getExternalStorageDirectory().getPath() + "/gnumap/main.db");
         // 테스트
-        ArrayList<Building> temp = dbHelper.getResult();
+//        ArrayList<Building> temp = dbHelper.getResult();
 //        dbHelper.searchName("컴퓨터과학관");
 //        dbHelper.searchNum(30);
 //        dbHelper.searchPos(35.152, 128.1, 0.001);
@@ -177,6 +180,13 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         GPStext.setTextColor(Color.WHITE);
         GPStext.setText("\n\n\n수신중");
         previewFrame.addView(GPStext);
+
+//        CompassView markerView = new CompassView(this);
+//        previewFrame.addView(markerView);
+//        markerView.invalidate();
+
+        markerView = new BuildView(this);
+        previewFrame.addView(markerView);
     }
 
     protected void onResume() {
@@ -256,7 +266,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             if (success) {
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                mAzimut = (float) Math.toDegrees(orientation[0]);
+                mAzimut = (float) Math.toDegrees(orientation[0])+90-43; // 오차보정
                 mPitch = (float) Math.toDegrees(orientation[1]);
                 mRoll = (float) Math.toDegrees(orientation[2]);
 
@@ -288,25 +298,38 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         long minTime = 500;
         float minDistance = 0;
 
+        //
         // GPS를 이용한 위치 요청
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
+        manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, gpsListener);
 
         // 위치 확인이 안되는 경우에도 최근에 확인된 위치 정보 먼저 확인
-        try {
-            Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastLocation != null) {
-
-                Double latitude = lastLocation.getLatitude();
-                Double longitude = lastLocation.getLongitude();
-                System.out.println("Last Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
-                GPStext.setText("\n\n\n\nLast Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
-//                Toast.makeText(getApplicationContext(), "Last Known Location : " + "Latitude : " + latitude + "\nLongitude:" + longitude, Toast.LENGTH_LONG).show();
-            }
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
+//        try {
+//            Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            if (lastLocation != null) {
+//
+//                Double latitude = lastLocation.getLatitude();
+//                Double longitude = lastLocation.getLongitude();
+//                System.out.println("Last Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
+//                GPStext.setText("\n\n\n\nLast Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
+////                Toast.makeText(getApplicationContext(), "Last Known Location : " + "Latitude : " + latitude + "\nLongitude:" + longitude, Toast.LENGTH_LONG).show();
+//
+//            }
+//        } catch(Exception ex) {
+//            ex.printStackTrace();
+//        }
 
         Toast.makeText(getApplicationContext(), "위치 확인이 시작되었습니다. 로그를 확인하세요.", Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void setXY(double x, double y){
+        this.X = x; this.Y = y;
+        this.buildList = dbHelper.searchPos(x, y, 0.0005);
+        for (int i = 0; i < buildList.size(); i++){
+//            System.out.println(this.buildList.get(i));
+            buildList.get(i).printAll();
+        }
 
     }
 
@@ -320,11 +343,13 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         public void onLocationChanged(Location location) {
             Double latitude = location.getLatitude();
             Double longitude = location.getLongitude();
+            String provider = location.getProvider();
 
             String msg = "Latitude : "+ latitude + "\nLongitude:"+ longitude;
-            Log.i("GPSListener", msg);
-            GPStext.setText("\n\n\n\nLast Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
+//            Log.i("GPSListener", msg);
+            GPStext.setText("\n\n\n\n" + "Latitude : " + latitude + " Longitude:" + longitude + " Provider: " + provider);
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+            setXY(latitude, longitude);
         }
 
         public void onProviderDisabled(String provider) {

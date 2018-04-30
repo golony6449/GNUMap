@@ -104,7 +104,7 @@ public class DBHelper extends SQLiteOpenHelper{
         String result = "";
 
         // TODO: 예외처리
-        Cursor cursor = db.rawQuery("SELECT buildNum, buildName FROM building WHERE X > " + (X-Xrange) + " and X < " + (X+Xrange) + " and Y > " + (Y-Yrange)
+        Cursor cursor = db.rawQuery("SELECT * FROM building WHERE X > " + (X-Xrange) + " and X < " + (X+Xrange) + " and Y > " + (Y-Yrange)
                 + " and Y < " + (Y+Yrange), null);
         while(cursor.moveToNext()){
             buildList.add(new Building(cursor.getInt(1),cursor.getString(2),cursor.getDouble(3),cursor.getDouble(4),
