@@ -111,7 +111,7 @@ public class DBHelper extends SQLiteOpenHelper{
                     cursor.getString(5), cursor.getInt(6)));
 
             result += cursor.getString(0) + "  " + cursor.getString(1);
-            System.out.println(result);
+//            System.out.println(result);
             result = "";
         }
 

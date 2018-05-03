@@ -276,8 +276,8 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
                 String result;
                 result = "Azimut:" + mAzimut + "\n" + "Pitch:" + mPitch + "\n" + "Roll:" + mRoll;
-//                result = "방위각: " + mAzimut;
                 text.setText(result);
+                markerView.setAzimut(mAzimut);
             }
         }
     }
@@ -295,7 +295,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         // 위치 정보를 받을 리스너 생성
         GPSListener gpsListener = new GPSListener();
-        long minTime = 500;
+        long minTime = 100;
         float minDistance = 0;
 
         //
@@ -323,14 +323,15 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
     }
 
+
     public void setXY(double x, double y){
         this.X = x; this.Y = y;
         this.buildList = dbHelper.searchPos(x, y, 0.0005);
-        for (int i = 0; i < buildList.size(); i++){
-//            System.out.println(this.buildList.get(i));
-            buildList.get(i).printAll();
-        }
-
+//        for (int i = 0; i < buildList.size(); i++){
+////            System.out.println(this.buildList.get(i));
+//            buildList.get(i).printAll();
+//        }
+        markerView.setMarkerList(buildList, x, y);
     }
 
     /**
