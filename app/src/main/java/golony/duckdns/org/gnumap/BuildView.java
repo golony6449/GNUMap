@@ -58,7 +58,7 @@ public class BuildView extends View {
 
             if (Math.abs(diff) < (Math.PI / 3)) {
                 double xStep = getWidth() / 60;
-                float position = (getWidth() / 2) - ((float) (diff *(180/Math.PI)) * (float) xStep);    // TODO: 수정필요
+                float position = (getWidth() / 2) + ((float) (diff *(180/Math.PI)) * (float) xStep);    // TODO: 수정필요
 
                 RectF obj = new RectF( position - 100.f , getHeight()*0.4f, position + 100.f , getHeight()*0.6f);
                 System.out.println("angle From X: " + (angleFromXaxis * (180/Math.PI)) + "   " + buildObj.returnName()+"의 X축 기준 건물위치: " + (buildObj.returnArcTan()* (180/Math.PI)));
