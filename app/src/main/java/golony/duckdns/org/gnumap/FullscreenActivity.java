@@ -266,7 +266,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             if (success) {
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                mAzimut = (float) Math.toDegrees(orientation[0])+90-43; // 오차보정
+                mAzimut = (float) Math.toDegrees(orientation[0])+90+7; // 오차보정
                 mPitch = (float) Math.toDegrees(orientation[1]);
                 mRoll = (float) Math.toDegrees(orientation[2]);
 

@@ -9,6 +9,8 @@ import android.os.Build;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+
+// 내장된 SQLite Helper 상속
 public class DBHelper extends SQLiteOpenHelper{
 
     // 관리할 DB이름, 버전정보를 생성자로 받음
@@ -18,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        System.out.println("DB Created!");
+        System.out.println("DB Created!");  // 디버깅용
     }
 
     @Override
@@ -26,6 +28,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     }
 
+    // 디비 내용 전체를 빌딩리스트로 반환 (디버깅용)
     public ArrayList<Building> getResult(){
         System.out.println("getResult 시작");
 
@@ -48,6 +51,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return buildList;
     }
 
+    // 이름으로 검색, 해당하는 빌딩리스트를 반환
     public ArrayList<Building> searchName(String str){
         System.out.println("getName 시작");
         System.out.println("키워드: " + str);
@@ -70,6 +74,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return buildList;
     }
 
+    // 건물 번호로 검색, 해당하는 빌딩리스트 반환
     public ArrayList<Building> searchNum(int num){
         System.out.println("searchNum 시작");
         System.out.println("키워드: " + num);
@@ -93,6 +98,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return buildList;
     }
 
+    // 위치기반 검색, 해당하는 빌딩리스트 반환
     public ArrayList<Building> searchPos(double X, double Y, double range){
         double Xrange = range;
         double Yrange = range;

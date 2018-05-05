@@ -23,8 +23,12 @@ public class Building {
     public String returnName(){
         return buildName;
     }
-    public double returnTan(){
-        return yDiff / xDiff;
+    public double returnArcTan(){
+        double tan = yDiff / xDiff;
+        double angle = Math.atan(tan);
+        if (angle < 0)
+            angle += (2*Math.PI);
+        return angle;
     }
 
     public void setXYDiff(double x, double y){
