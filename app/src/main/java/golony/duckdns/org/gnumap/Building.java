@@ -25,19 +25,19 @@ public class Building {
     }
     public double returnArcTan(){
         double tan = yDiff / xDiff;
-        double angle = Math.atan(tan);
-        if (angle < 0)
-            angle += (2*Math.PI);
+        double radAngle = Math.atan(tan);
+        if (radAngle < 0)
+            radAngle += (2*Math.PI);
 
         // 3사분면
         if (yDiff > 0 && xDiff > 0)
-            angle += Math.PI;
+            radAngle += Math.PI;
 
 //        // TODO: 4사분면 고려?
 //        if (yDiff < 0 && xDiff > 0)
 //            angle += Math.PI;
 
-        return angle;
+        return radAngle;
     }
 
     public void setXYDiff(double x, double y){

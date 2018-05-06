@@ -56,21 +56,15 @@ public class BuildView extends View {
         for (int i =0; i < buildingList.size(); i++) {
             Building buildObj = buildingList.get(i);
             double diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
+            double xStep = getWidth() / 60;
+            double yStep = getHeight() / 60;
+            float xPosition = 0;
+            float yPosition = (getHeight() / 2) - ((float) yStep * (90 + (float) this.pitch));
 
             // 1 사분면
             if (angle < 90) {
                 if (Math.abs(diff) < (Math.PI / 3)) {
-                    double xStep = getWidth() / 60;
-                    double yStep = getHeight() / 60;
-                    float xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
-                    float yPosition = (getHeight() / 2) - ((float) yStep * (90 + (float) this.pitch));
-
-//                RectF obj = new RectF( xPosition - 100.f , getHeight()*0.4f, xPosition + 100.f , getHeight()*0.6f);
-                    RectF obj = new RectF(xPosition - 100.f, yPosition - 100.f, xPosition + 100.f, yPosition + 100.f);
-                    System.out.println("angle From X: " + (radAngleFromXaxis * (180 / Math.PI)) + "   " + buildObj.returnName() + "의 X축 기준 건물위치: " + (buildObj.returnArcTan() * (180 / Math.PI)));
-//                System.out.println("diff: " + (diff *(180/Math.PI)) + "   position: " + position);
-                    canvas.drawText(buildObj.returnName(), xPosition - 80.f, yPosition, pntText);
-                    canvas.drawRoundRect(obj, 5, 5, Pnt);
+                    xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
                 } else {
 //                System.out.println("범위 초과: " + buildObj.returnName() + "   diff: " + (diff*(180/ Math.PI)));
                 }
@@ -89,6 +83,13 @@ public class BuildView extends View {
             else if (angle < 360){
 
             }
+
+            // 변수 생성
+            RectF obj = new RectF(xPosition - 100.f, yPosition - 100.f, xPosition + 100.f, yPosition + 100.f);
+            System.out.println("angle From X: " + (radAngleFromXaxis * (180 / Math.PI)) + "   " + buildObj.returnName() + "의 X축 기준 건물위치: " + (buildObj.returnArcTan() * (180 / Math.PI)));
+//                System.out.println("diff: " + (diff *(180/Math.PI)) + "   position: " + position);
+            canvas.drawText(buildObj.returnName(), xPosition - 80.f, yPosition, pntText);
+            canvas.drawRoundRect(obj, 5, 5, Pnt);
         }
 
         super.onDraw(canvas);
