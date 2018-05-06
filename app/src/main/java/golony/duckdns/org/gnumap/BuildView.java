@@ -21,6 +21,7 @@ public class BuildView extends View {
     private double calcedAngle;
     private int boxList[] = {1, 0, 0, 0, 0, 0, 0, 0, 1};
     private double angle;
+    private double pitch;
 
     public BuildView(Context ctx) {
         super(ctx);
@@ -34,7 +35,7 @@ public class BuildView extends View {
         // TODO: 수정필요
 //        double angleFromXaxis = (this.angle ) * (Math.PI / 180) - Math.PI / 2;
 //        double angleFromXaxis = -(this.angle * (Math.PI / 180)) - (Math.PI / 2);
-        double angleFromXaxis = (90 - this.angle) * (Math.PI / 180);
+        double radAngleFromXaxis = (90 - this.angle) * (Math.PI / 180);
 
         Paint Pnt = new Paint();   // 페인트 생성
         Pnt.setColor(0xfff612ab);  // 핑크색
@@ -52,22 +53,41 @@ public class BuildView extends View {
             return;
         }
 
-        for (int i =0; i < buildingList.size(); i++){
+        for (int i =0; i < buildingList.size(); i++) {
             Building buildObj = buildingList.get(i);
-            double diff = angleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
+            double diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
 
-            if (Math.abs(diff) < (Math.PI / 3)) {
-                double xStep = getWidth() / 60;
-                float position = (getWidth() / 2) + ((float) (diff *(180/Math.PI)) * (float) xStep);    // TODO: 수정필요
+            // 1 사분면
+            if (angle < 90) {
+                if (Math.abs(diff) < (Math.PI / 3)) {
+                    double xStep = getWidth() / 60;
+                    double yStep = getHeight() / 60;
+                    float xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
+                    float yPosition = (getHeight() / 2) - ((float) yStep * (90 + (float) this.pitch));
 
-                RectF obj = new RectF( position - 100.f , getHeight()*0.4f, position + 100.f , getHeight()*0.6f);
-                System.out.println("angle From X: " + (angleFromXaxis * (180/Math.PI)) + "   " + buildObj.returnName()+"의 X축 기준 건물위치: " + (buildObj.returnArcTan()* (180/Math.PI)));
+//                RectF obj = new RectF( xPosition - 100.f , getHeight()*0.4f, xPosition + 100.f , getHeight()*0.6f);
+                    RectF obj = new RectF(xPosition - 100.f, yPosition - 100.f, xPosition + 100.f, yPosition + 100.f);
+                    System.out.println("angle From X: " + (radAngleFromXaxis * (180 / Math.PI)) + "   " + buildObj.returnName() + "의 X축 기준 건물위치: " + (buildObj.returnArcTan() * (180 / Math.PI)));
 //                System.out.println("diff: " + (diff *(180/Math.PI)) + "   position: " + position);
-                canvas.drawText(buildObj.returnName(),position, getHeight() / 2f, pntText);
-                canvas.drawRoundRect(obj, 5, 5, Pnt);
-            }
-            else{
+                    canvas.drawText(buildObj.returnName(), xPosition - 80.f, yPosition, pntText);
+                    canvas.drawRoundRect(obj, 5, 5, Pnt);
+                } else {
 //                System.out.println("범위 초과: " + buildObj.returnName() + "   diff: " + (diff*(180/ Math.PI)));
+                }
+            }
+
+            // 2 사분면
+            else if (angle < 180){
+
+            }
+
+            // 3사분면
+            else if (angle < 270){
+
+            }
+
+            else if (angle < 360){
+
             }
         }
 
@@ -145,8 +165,9 @@ public class BuildView extends View {
 //        invalidate();
     }
 
-    public void setAzimut(double angle){
+    public void setSensorValue(double angle, double pitch){
         this.angle = angle;
+        this.pitch = pitch; // 기기가 90도(PI/2)만큼 회전되어있기 때문에 센서의 Roll 값을 Pitch로 사용
 
 //        System.out.println("방위각 차이: " + (calcedAngle - this.angle));
 
@@ -162,7 +183,7 @@ public class BuildView extends View {
                 boxList[0] = 1;
 
             invalidate();
-        }
+    }
 }
 
 
