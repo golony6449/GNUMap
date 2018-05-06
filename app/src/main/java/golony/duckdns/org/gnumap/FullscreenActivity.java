@@ -113,6 +113,9 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     float[] gravityVal;
     float mAzimut, mPitch, mRoll;
     double X, Y;
+    float[] azimutList = new float[50];
+    float[] rollList = new float[50];
+    int count = 0;
 
     // DB Helper 생성
     DBHelper dbHelper;
@@ -276,8 +279,25 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
                 String result;
                 result = "Azimut:" + mAzimut + "\n" + "Pitch:" + mPitch + "\n" + "Roll:" + mRoll;
-                text.setText(result);
-                markerView.setAzimut(mAzimut);
+
+                int idx = 20;
+                if (count == idx - 1){
+                    float azimutSum = 0;
+                    float rollSum = 0;
+                    for (int i = 0; i < idx; i++){
+                        azimutSum += azimutList[i] / idx;
+                        rollSum += rollList[i] / idx;
+                    }
+                    text.setText(result);
+                    markerView.setSensorValue(azimutSum, rollSum);  // 기기가 90도(PI/2)만큼 회전되어있기 때문에 센서의 Roll 값을 Pitch로 사용
+                    count = 0;
+                }
+                else{
+                    azimutList[count] = mAzimut;
+                    rollList[count] = mRoll;
+                    count += 1;
+                }
+
             }
         }
     }
@@ -326,7 +346,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
     public void setXY(double x, double y){
         this.X = x; this.Y = y;
-        this.buildList = dbHelper.searchPos(x, y, 0.0005);
+        this.buildList = dbHelper.searchPos(x, y, 0.001);
 //        for (int i = 0; i < buildList.size(); i++){
 ////            System.out.println(this.buildList.get(i));
 //            buildList.get(i).printAll();
