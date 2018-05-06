@@ -28,6 +28,15 @@ public class Building {
         double angle = Math.atan(tan);
         if (angle < 0)
             angle += (2*Math.PI);
+
+        // 3사분면
+        if (yDiff > 0 && xDiff > 0)
+            angle += Math.PI;
+
+//        // TODO: 4사분면 고려?
+//        if (yDiff < 0 && xDiff > 0)
+//            angle += Math.PI;
+
         return angle;
     }
 
