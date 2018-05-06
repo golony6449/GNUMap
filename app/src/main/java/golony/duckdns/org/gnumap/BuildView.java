@@ -35,7 +35,6 @@ public class BuildView extends View {
         // TODO: 수정필요
 //        double angleFromXaxis = (this.angle ) * (Math.PI / 180) - Math.PI / 2;
 //        double angleFromXaxis = -(this.angle * (Math.PI / 180)) - (Math.PI / 2);
-        double radAngleFromXaxis = (90 - this.angle) * (Math.PI / 180);
 
         Paint Pnt = new Paint();   // 페인트 생성
         Pnt.setColor(0xfff612ab);  // 핑크색
@@ -55,7 +54,8 @@ public class BuildView extends View {
 
         for (int i =0; i < buildingList.size(); i++) {
             Building buildObj = buildingList.get(i);
-            double diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
+            double diff = 0; // 방위각과 건물 위치간의 차이
+            double radAngleFromXaxis = 0;
             double xStep = getWidth() / 60;
             double yStep = getHeight() / 60;
             float xPosition = 0;
@@ -64,24 +64,37 @@ public class BuildView extends View {
             // 1 사분면
             if (angle < 90) {
                 if (Math.abs(diff) < (Math.PI / 3)) {
+                    radAngleFromXaxis = (90 - this.angle) * (Math.PI / 180);
+                    diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
+
                     xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
                 } else {
 //                System.out.println("범위 초과: " + buildObj.returnName() + "   diff: " + (diff*(180/ Math.PI)));
                 }
             }
 
-            // 2 사분면
+            // 4 사분면
             else if (angle < 180){
+                radAngleFromXaxis = (360 - (this.angle - 90)) * (Math.PI / 180);
+                diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
 
+                xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
             }
 
             // 3사분면
             else if (angle < 270){
+                radAngleFromXaxis = (180 + (270 - this.angle)) * (Math.PI / 180);
+                diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
 
+                xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
             }
 
+            // 2사분면
             else if (angle < 360){
+                radAngleFromXaxis = (90 + (360 - this.angle)) * (Math.PI / 180);
+                diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
 
+                xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
             }
 
             // 변수 생성
