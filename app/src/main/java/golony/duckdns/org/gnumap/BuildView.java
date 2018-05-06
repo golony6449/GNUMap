@@ -91,37 +91,6 @@ public class BuildView extends View {
             }
         }
 
-        // 주석
-//        if (boxList[0] == 1){
-//            RectF LU = new RectF(0, 0, getWidth()*0.5f, getHeight()*0.5f); // 시작 X,Y 좌표, 끝 X,Y 좌표
-//            canvas.drawRoundRect(LU,5,5, Pnt); // 사각형 모서리 깎아 그리기
-//        }
-//
-//        if (boxList[2] == 1){
-//            RectF RU = new RectF(getWidth()*0.5f, 0, getWidth(), getHeight()*0.5f); // 시작 X,Y 좌표, 끝 X,Y 좌표
-//            canvas.drawRoundRect(RU,5,5, Pnt); // 사각형 모서리 깎아 그리기
-//        }
-//
-//        if (boxList[6] == 1){
-//            RectF LB = new RectF(0, getHeight()*0.5f, getWidth()*0.5f, getHeight()); // 시작 X,Y 좌표, 끝 X,Y 좌표
-//            canvas.drawRoundRect(LB,5,5, Pnt); // 사각형 모서리 깎아 그리기
-//        }
-//
-//
-//        if (boxList[8] == 1){
-//            RectF RB = new RectF(getWidth()*0.5f, getHeight()*0.5f, getWidth(), getHeight()); // 시작 X,Y 좌표, 끝 X,Y 좌표
-//            canvas.drawRoundRect(RB,5,5, Pnt); // 사각형 모서리 깎아 그리기
-//        }
-
-//        canvas.rotate(360 - mAzimuth, PADDING + mCompass.getMinimumWidth()
-//                / 2, PADDING + mCompass.getMinimumHeight() / 2);
-//        mCompass.setBounds(PADDING, PADDING, PADDING
-//                + mCompass.getMinimumWidth(), PADDING
-//                + mCompass.getMinimumHeight());
-//
-//        mCompass.draw(canvas);
-//        canvas.restore();
-
         super.onDraw(canvas);
     }
 
@@ -143,24 +112,16 @@ public class BuildView extends View {
             obj.setXYDiff(xDiff, yDiff);
             buildList.set(i, obj);
 
-////            정규화
-//            xDiff = xDiff / (Math.max(Math.abs(xDiff), Math.abs(yDiff)));
-//            yDiff = yDiff / (Math.max(Math.abs(xDiff), Math.abs(yDiff)));
-
-
             calcedAngle = Math.atan(yDiff / xDiff);
+
+//            디버깅용
 //            calcedAngle = Math.acos(yDiff / Math.sqrt(xDiff * xDiff + yDiff * yDiff));
 //            System.out.println("X: " + x + "  Y: " + y);
 //            System.out.println("objX: " + obj.X + "  objY: " + obj.Y);
 //            System.out.println("xDiff: " + xDiff + "  yDiff: " + yDiff);
+
             System.out.println("계산된 방위각: " + (obj.returnArcTan() * (180/Math.PI)));
 
-//            if (Math.abs(calcedAngle - this.angle) < 60){
-//                if ((calcedAngle - this.angle) < 30 & (calcedAngle - this.angle) > 0)
-//                    boxList[0] = 1;
-//                if ((calcedAngle - this.angle) > -30 & (calcedAngle - this.angle) < 0)
-//                    boxList[2] = 1;
-//            }
         }
 //        invalidate();
     }
@@ -171,12 +132,6 @@ public class BuildView extends View {
 
 //        System.out.println("방위각 차이: " + (calcedAngle - this.angle));
 
-//            if (Math.abs(calcedAngle - this.angle) < 60){
-//                if ((calcedAngle - this.angle) < 30 & (calcedAngle - this.angle) > 0)
-//                    boxList[0] = 1;
-//                if ((calcedAngle - this.angle) > -30 & (calcedAngle - this.angle) < 0)
-//                    boxList[2] = 1;
-//            }
             if (Math.abs(calcedAngle - this.angle) < 30 & calcedAngle < angle)
                 boxList[2] = 1;
             if (Math.abs(calcedAngle - this.angle) < 30 & calcedAngle > angle)

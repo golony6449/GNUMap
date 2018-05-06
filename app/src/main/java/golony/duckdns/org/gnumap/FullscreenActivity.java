@@ -318,39 +318,18 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         long minTime = 100;
         float minDistance = 0;
 
-        //
         // GPS를 이용한 위치 요청
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
         manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, gpsListener);
-
-        // 위치 확인이 안되는 경우에도 최근에 확인된 위치 정보 먼저 확인
-//        try {
-//            Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            if (lastLocation != null) {
-//
-//                Double latitude = lastLocation.getLatitude();
-//                Double longitude = lastLocation.getLongitude();
-//                System.out.println("Last Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
-//                GPStext.setText("\n\n\n\nLast Known Location : " + " Latitude : " + latitude + " Longitude:" + longitude);
-////                Toast.makeText(getApplicationContext(), "Last Known Location : " + "Latitude : " + latitude + "\nLongitude:" + longitude, Toast.LENGTH_LONG).show();
-//
-//            }
-//        } catch(Exception ex) {
-//            ex.printStackTrace();
-//        }
 
         Toast.makeText(getApplicationContext(), "위치 확인이 시작되었습니다. 로그를 확인하세요.", Toast.LENGTH_SHORT).show();
 
     }
 
-
     public void setXY(double x, double y){
         this.X = x; this.Y = y;
         this.buildList = dbHelper.searchPos(x, y, 0.001);
-//        for (int i = 0; i < buildList.size(); i++){
-////            System.out.println(this.buildList.get(i));
-//            buildList.get(i).printAll();
-//        }
+
         markerView.setMarkerList(buildList, x, y);
     }
 
