@@ -269,7 +269,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             if (success) {
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                mAzimut = (float) Math.toDegrees(orientation[0])+90+7; // 오차보정
+                mAzimut = (float) Math.toDegrees(orientation[0])+90 + 7; // 오차보정
                 mPitch = (float) Math.toDegrees(orientation[1]);
                 mRoll = (float) Math.toDegrees(orientation[2]);
 
@@ -277,17 +277,17 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
                     mAzimut = mAzimut + 360;
                 }
 
-                String result;
-                result = "Azimut:" + mAzimut + "\n" + "Pitch:" + mPitch + "\n" + "Roll:" + mRoll;
 
-                int idx = 20;
-                if (count == idx - 1){
+
+                int idx = 10;
+                if (count == idx){
                     float azimutSum = 0;
                     float rollSum = 0;
                     for (int i = 0; i < idx; i++){
                         azimutSum += azimutList[i] / idx;
                         rollSum += rollList[i] / idx;
                     }
+                    String result = "Azimut:" + azimutSum + "\n" + "Pitch:" + mPitch + "\n" + "Roll:" + mRoll;
                     text.setText(result);
                     markerView.setSensorValue(azimutSum, rollSum);  // 기기가 90도(PI/2)만큼 회전되어있기 때문에 센서의 Roll 값을 Pitch로 사용
                     count = 0;
@@ -315,7 +315,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         // 위치 정보를 받을 리스너 생성
         GPSListener gpsListener = new GPSListener();
-        long minTime = 100;
+        long minTime = 1500;
         float minDistance = 0;
 
         // GPS를 이용한 위치 요청

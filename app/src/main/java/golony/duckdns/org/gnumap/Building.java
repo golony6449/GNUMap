@@ -37,6 +37,11 @@ public class Building {
 //        if (yDiff < 0 && xDiff > 0)
 //            angle += Math.PI;
 
+        // 2 사분면인 경우 Angle 값에서 180도 차감
+        // TODO: 왜 90도 회전하면 되는걸까?
+        if (yDiff > 0 && xDiff < 0)
+            radAngle -= Math.PI;
+
         return radAngle;
     }
 
