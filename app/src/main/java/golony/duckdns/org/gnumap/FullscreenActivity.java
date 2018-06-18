@@ -1,7 +1,9 @@
 package golony.duckdns.org.gnumap;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Sensor;
@@ -12,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -269,21 +272,20 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             if (success) {
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                mAzimut = (float) Math.toDegrees(orientation[0])+90 + 7; // 오차보정
+                mAzimut = (float) Math.toDegrees(orientation[0]) + 90 + 7; // 오차보정
                 mPitch = (float) Math.toDegrees(orientation[1]);
                 mRoll = (float) Math.toDegrees(orientation[2]);
 
-                if (mAzimut < 0){
+                if (mAzimut < 0) {
                     mAzimut = mAzimut + 360;
                 }
 
 
-
-                int idx = 10;
-                if (count == idx){
+                int idx = 20;
+                if (count == idx) {
                     float azimutSum = 0;
                     float rollSum = 0;
-                    for (int i = 0; i < idx; i++){
+                    for (int i = 0; i < idx; i++) {
                         azimutSum += azimutList[i] / idx;
                         rollSum += rollList[i] / idx;
                     }
@@ -291,8 +293,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
                     text.setText(result);
                     markerView.setSensorValue(azimutSum, rollSum);  // 기기가 90도(PI/2)만큼 회전되어있기 때문에 센서의 Roll 값을 Pitch로 사용
                     count = 0;
-                }
-                else{
+                } else {
                     azimutList[count] = mAzimut;
                     rollList[count] = mRoll;
                     count += 1;
@@ -302,7 +303,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         }
     }
 
-    public void onAccuracyChanged (Sensor sensor,int val){
+    public void onAccuracyChanged(Sensor sensor, int val) {
 
     }
 
@@ -319,6 +320,16 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         float minDistance = 0;
 
         // GPS를 이용한 위치 요청
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
         manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, gpsListener);
 
@@ -328,7 +339,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
     public void setXY(double x, double y){
         this.X = x; this.Y = y;
-        this.buildList = dbHelper.searchPos(x, y, 0.001);
+        this.buildList = dbHelper.searchPos(x, y, 0.0015);
 
         markerView.setMarkerList(buildList, x, y);
     }

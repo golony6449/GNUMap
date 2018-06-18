@@ -63,14 +63,18 @@ public class BuildView extends View {
 
             // 1 사분면
             if (angle < 90) {
-                if (Math.abs(diff) < (Math.PI / 3)) {
                     radAngleFromXaxis = (90 - this.angle) * (Math.PI / 180);
                     diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
 
                     xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
-                } else {
-//                System.out.println("범위 초과: " + buildObj.returnName() + "   diff: " + (diff*(180/ Math.PI)));
-                }
+//                if (Math.abs(diff) < (Math.PI / 3)) {
+//                    radAngleFromXaxis = (90 - this.angle) * (Math.PI / 180);
+//                    diff = radAngleFromXaxis - buildObj.returnArcTan(); // 방위각과 건물 위치간의 차이
+//
+//                    xPosition = (getWidth() / 2) + ((float) (diff * (180 / Math.PI)) * (float) xStep);    // TODO: 수정필요
+//                } else {
+////                System.out.println("범위 초과: " + buildObj.returnName() + "   diff: " + (diff*(180/ Math.PI)));
+//                }
             }
 
             // 4 사분면
@@ -99,6 +103,12 @@ public class BuildView extends View {
 
             // 변수 생성
             RectF obj = new RectF(xPosition - 100.f, yPosition - 100.f, xPosition + 100.f, yPosition + 100.f);
+
+            if ((buildObj.returnArcTan() * (180 / Math.PI)) < 90) System.out.print("1사분면 ");
+            else if ((buildObj.returnArcTan() * (180 / Math.PI)) < 180) System.out.print("2사분면 ");
+            else if ((buildObj.returnArcTan() * (180 / Math.PI)) < 270) System.out.print("3사분면 ");
+            else if ((buildObj.returnArcTan() * (180 / Math.PI)) < 360) System.out.print("4사분면 ");
+
             System.out.println("angle From X: " + (radAngleFromXaxis * (180 / Math.PI)) + "   " + buildObj.returnName() + "의 X축 기준 건물위치: " + (buildObj.returnArcTan() * (180 / Math.PI)));
 //                System.out.println("diff: " + (diff *(180/Math.PI)) + "   position: " + position);
             canvas.drawText(buildObj.returnName(), xPosition - 80.f, yPosition, pntText);

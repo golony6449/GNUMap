@@ -26,8 +26,8 @@ public class Building {
     public double returnArcTan(){
         double tan = yDiff / xDiff;
         double radAngle = Math.atan(tan);
-        if (radAngle < 0)
-            radAngle += (2*Math.PI);
+//        if (radAngle < 0)
+//            radAngle += (2*Math.PI);
 
         // 3사분면
         if (yDiff > 0 && xDiff > 0)
@@ -40,12 +40,21 @@ public class Building {
         // 2 사분면인 경우 Angle 값에서 180도 차감
         // TODO: 왜 90도 회전하면 되는걸까?
         if (yDiff > 0 && xDiff < 0)
-            radAngle -= Math.PI;
+            radAngle += Math.PI;
+
+
+        if (radAngle < 0)
+            radAngle += (2*Math.PI);
+        else if (radAngle > 2*Math.PI)
+            radAngle -= (2*Math.PI);
 
         return radAngle;
     }
 
     public void setXYDiff(double x, double y){
+//        double xDiff = x - obj.X;
+//        double yDiff = y - obj.Y;
+
         this.xDiff = x;
         this.yDiff = y;
     }
